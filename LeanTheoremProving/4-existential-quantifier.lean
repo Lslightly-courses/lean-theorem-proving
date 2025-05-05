@@ -215,4 +215,19 @@ example (a : α) : (∃ x, p x → r) ↔ (∀ x, p x) → r :=
   )
 
 
-example (a : α) : (∃ x, r → p x) ↔ (r → ∃ x, p x) := sorry
+example (a : α) : (∃ x, r → p x) ↔ (r → ∃ x, p x) :=
+  Iff.intro (
+    fun ⟨w, hrpx⟩ =>
+      fun hr: r =>
+        ⟨w, hrpx hr⟩
+  ) (
+    fun hr_expx =>
+      byCases (
+        fun hr: r =>
+          match hr_expx hr with
+            | ⟨w, hw⟩ => ⟨w, fun _: r => hw⟩
+      ) (
+        fun hnr: ¬ r =>
+          ⟨a, fun hr: r => absurd hr hnr⟩
+      )
+  )
